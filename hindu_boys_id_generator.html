@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College ID Card Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .file-upload:hover .file-upload-label {
+            background: #5a67d8;
+        }
+
+        .slider-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+        }
+
+        .slider-value {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-download {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .id-card-container {
+            perspective: 1000px;
+        }
+
+        .id-card {
+            width: 340px;
+            height: 540px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 0 auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s;
+            overflow: hidden;
+        }
+
+        .id-card:hover {
+            transform: rotateY(5deg) rotateX(5deg);
+        }
+
+        .id-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .college-name {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.3;
+            text-align: center;
+            margin: 0;
+        }
+
+        .student-photo {
+            width: 120px;
+            height: 140px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 3px solid #3498db;
+            margin: 20px auto;
+            display: block;
+            background: #f0f0f0;
+        }
+
+        .student-details {
+            padding: 0 20px 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #ddd;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .detail-value {
+            color: #34495e;
+            text-align: right;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        .student-id {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 15px 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .id-card {
+                width: 280px;
+                height: 450px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 College ID Card Generator</h1>
+            <p>Generate professional student ID cards with random Hindu boys' names</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <div class="form-group">
+                    <label for="collegeName">College Name:</label>
+                    <input type="text" id="collegeName" placeholder="Enter college name">
+                </div>
+
+                <div class="form-group">
+                    <label for="studentPhoto">Student Photo:</label>
+                    <div class="file-upload">
+                        <input type="file" id="studentPhoto" accept="image/*">
+                        <label for="studentPhoto" class="file-upload-label">Choose Student Photo</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Show/Hide Fields:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showStudentId" checked>
+                            <label for="showStudentId">Student ID</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showName" checked>
+                            <label for="showName">Name</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showMobile" checked>
+                            <label for="showMobile">Mobile No</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showDepartment" checked>
+                            <label for="showDepartment">Department</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showSession" checked>
+                            <label for="showSession">Session Year</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showBloodGroup" checked>
+                            <label for="showBloodGroup">Blood Group</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="showValidTill" checked>
+                            <label for="showValidTill">Valid Till</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Font & Position Settings:</label>
+                    <div class="slider-group">
+                        <div class="slider-container">
+                            <label>Font Size:</label>
+                            <input type="range" id="fontSize" min="10" max="18" value="14">
+                            <div class="slider-value"><span id="fontSizeValue">14px</span></div>
+                        </div>
+                        <div class="slider-container">
+                            <label>Line Height:</label>
+                            <input type="range" id="lineHeight" min="1" max="2" step="0.1" value="1.2">
+                            <div class="slider-value"><span id="lineHeightValue">1.2</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-generate" onclick="generateRandomCard()">Generate Random ID</button>
+                    <button class="btn-download" onclick="downloadCard()">Download ID Card</button>
+                </div>
+            </div>
+
+            <div class="id-card-container">
+                <div class="id-card" id="idCard">
+                    <div class="id-header">
+                        <div class="college-name" id="collegeNameDisplay">ABC College of Engineering</div>
+                    </div>
+
+                    <img id="studentImg" class="student-photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 140'%3E%3Crect width='120' height='140' fill='%23f0f0f0'/%3E%3Ccircle cx='60' cy='50' r='25' fill='%23ddd'/%3E%3Cpath d='M35 100 Q60 80 85 100 L85 140 L35 140 Z' fill='%23ddd'/%3E%3C/svg%3E" alt="Student Photo">
+
+                    <div class="student-id" id="studentIdDisplay">ID: STU2024001</div>
+
+                    <div class="student-details" id="studentDetails">
+                        <div class="detail-row" id="nameRow">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value" id="nameValue">Arjun Kumar Singh</span>
+                        </div>
+                        <div class="detail-row" id="mobileRow">
+                            <span class="detail-label">Mobile:</span>
+                            <span class="detail-value" id="mobileValue">9876543210</span>
+                        </div>
+                        <div class="detail-row" id="departmentRow">
+                            <span class="detail-label">Department:</span>
+                            <span class="detail-value" id="departmentValue">Computer Science</span>
+                        </div>
+                        <div class="detail-row" id="sessionRow">
+                            <span class="detail-label">Session:</span>
+                            <span class="detail-value" id="sessionValue">2024-2028</span>
+                        </div>
+                        <div class="detail-row" id="bloodGroupRow">
+                            <span class="detail-label">Blood Group:</span>
+                            <span class="detail-value" id="bloodGroupValue">B+</span>
+                        </div>
+                        <div class="detail-row" id="validTillRow">
+                            <span class="detail-label">Valid Till:</span>
+                            <span class="detail-value" id="validTillValue">Dec 2028</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // Hindu boys names with surnames (50+ names)
+        const hinduBoysNames = [
+            'Arjun Kumar Singh', 'Rohit Sharma', 'Vikash Yadav', 'Deepak Tiwari', 'Amit Kumar',
+            'Raj Thakur', 'Gaurav Shukla', 'Manish Kumar', 'Vinay Singh', 'Suresh Mishra',
+            'Karan Gupta', 'Rajesh Agarwal', 'Ankit Pandey', 'Sanjay Verma', 'Rajeev Joshi',
+            'Nitin Dubey', 'Manoj Saxena', 'Pramod Rai', 'Arun Sinha', 'Rakesh Chandra',
+            'Vivek Tripathi', 'Pradeep Kumar', 'Ashish Sharma', 'Ravi Kant', 'Neeraj Singh',
+            'Dinesh Yadav', 'Mukesh Gupta', 'Santosh Mishra', 'Ramesh Tiwari', 'Umesh Kumar',
+            'Yogesh Pandey', 'Lokesh Verma', 'Jitendra Thakur', 'Mahesh Shukla', 'Satish Dubey',
+            'Pawan Saxena', 'Shubham Agarwal', 'Abhishek Joshi', 'Rahul Singh', 'Sachin Rai',
+            'Krishna Sinha', 'Govind Chandra', 'Shyam Tripathi', 'Mohan Kumar', 'Sunil Sharma',
+            'Ajay Kant', 'Vijay Singh', 'Bharat Yadav', 'Harish Gupta', 'Jagdish Mishra',
+            'Naveen Tiwari', 'Akhil Kumar', 'Anand Pandey', 'Brajesh Verma', 'Chandresh Thakur',
+            'Dharmendra Shukla', 'Girish Dubey', 'Harishchandra Saxena', 'Indresh Agarwal', 'Jayesh Joshi'
+        ];
+
+        const departments = [
+            'Computer Science', 'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering',
+            'Electronics & Communication', 'Information Technology', 'Chemical Engineering',
+            'Biotechnology', 'Mathematics', 'Physics', 'Chemistry', 'Commerce', 'Business Administration'
+        ];
+
+        const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+        function generateRandomData() {
+            const name = hinduBoysNames[Math.floor(Math.random() * hinduBoysNames.length)];
+            const department = departments[Math.floor(Math.random() * departments.length)];
+            const bloodGroup = bloodGroups[Math.floor(Math.random() * bloodGroups.length)];
+            
+            const currentYear = new Date().getFullYear();
+            const sessionStartYear = currentYear + Math.floor(Math.random() * 3) - 1;
+            const sessionEndYear = sessionStartYear + 4;
+            
+            const studentId = `STU${sessionStartYear}${String(Math.floor(Math.random() * 999) + 1).padStart(3, '0')}`;
+            const mobile = `${Math.floor(Math.random() * 3) + 7}${Math.floor(Math.random() * 900000000) + 100000000}`;
+            
+            const validTillMonth = ['Jun', 'Dec'][Math.floor(Math.random() * 2)];
+            const validTillYear = sessionEndYear;
+
+            return {
+                name,
+                department,
+                bloodGroup,
+                studentId,
+                mobile,
+                session: `${sessionStartYear}-${sessionEndYear}`,
+                validTill: `${validTillMonth} ${validTillYear}`
+            };
+        }
+
+        function updateCardDisplay() {
+            const data = generateRandomData();
+            
+            document.getElementById('nameValue').textContent = data.name;
+            document.getElementById('departmentValue').textContent = data.department;
+            document.getElementById('bloodGroupValue').textContent = data.bloodGroup;
+            document.getElementById('studentIdDisplay').textContent = `ID: ${data.studentId}`;
+            document.getElementById('mobileValue').textContent = data.mobile;
+            document.getElementById('sessionValue').textContent = data.session;
+            document.getElementById('validTillValue').textContent = data.validTill;
+        }
+
+        function toggleFields() {
+            const fields = ['studentId', 'name', 'mobile', 'department', 'session', 'bloodGroup', 'validTill'];
+            
+            fields.forEach(field => {
+                const checkbox = document.getElementById(`show${field.charAt(0).toUpperCase() + field.slice(1)}`);
+                const row = document.getElementById(`${field}Row`);
+                const idDisplay = document.getElementById(`${field}Display`);
+                
+                if (checkbox && checkbox.checked) {
+                    if (row) row.classList.remove('hidden');
+                    if (idDisplay) idDisplay.classList.remove('hidden');
+                } else {
+                    if (row) row.classList.add('hidden');
+                    if (idDisplay) idDisplay.classList.add('hidden');
+                }
+            });
+
+            // Adjust card height based on visible fields
+            const visibleRows = document.querySelectorAll('.detail-row:not(.hidden)').length;
+            const card = document.getElementById('idCard');
+            const baseHeight = 300;
+            const rowHeight = 35;
+            card.style.height = `${baseHeight + (visibleRows * rowHeight)}px`;
+        }
+
+        function updateFontSettings() {
+            const fontSize = document.getElementById('fontSize').value;
+            const lineHeight = document.getElementById('lineHeight').value;
+            
+            document.getElementById('fontSizeValue').textContent = `${fontSize}px`;
+            document.getElementById('lineHeightValue').textContent = lineHeight;
+            
+            const details = document.getElementById('studentDetails');
+            details.style.fontSize = `${fontSize}px`;
+            details.style.lineHeight = lineHeight;
+        }
+
+        function generateRandomCard() {
+            updateCardDisplay();
+            toggleFields();
+        }
+
+        function downloadCard() {
+            const card = document.getElementById('idCard');
+            
+            html2canvas(card, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `student_id_${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        // Event listeners
+        document.getElementById('collegeName').addEventListener('input', function() {
+            document.getElementById('collegeNameDisplay').textContent = this.value || 'ABC College of Engineering';
+        });
+
+        document.getElementById('studentPhoto').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('studentImg').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Checkbox event listeners
+        ['studentId', 'name', 'mobile', 'department', 'session', 'bloodGroup', 'validTill'].forEach(field => {
+            const checkbox = document.getElementById(`show${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            if (checkbox) {
+                checkbox.addEventListener('change', toggleFields);
+            }
+        });
+
+        // Font settings event listeners
+        document.getElementById('fontSize').addEventListener('input', updateFontSettings);
+        document.getElementById('lineHeight').addEventListener('input', updateFontSettings);
+
+        // Initialize
+        generateRandomCard();
+        updateFontSettings();
+    </script>
+</body>
+</html>
